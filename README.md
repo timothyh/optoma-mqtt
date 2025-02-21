@@ -113,20 +113,20 @@ This can be turned off by setting the `poll` attribute". Note that polling autom
 
 ## Extending/adding projector commands
 
+#### `lookup.json`
+Maps the numeric status values returned by the projector to text strings used in the
+MQTT messages. There are two sections:
+- `INFO` - Maps to the status values returned with `INFO` messages
+- `OK` - Maps values returned in `OK` messages. There are lookup tables for each kind of value
+
+Note hash tables are used for "numeric" values
+
 #### `commands.json`
 Projector commands are all configured in this file. It has the following sections:-
 - `set`, `query` and `key` which are used by the equivalent MQTT operations.
 - `setup` which is just used internally for setup commands
 
   Optoma projector commands are well documented on the web. Just search for "optoma rs232 protocol".
-
-#### `lookup.json`
-Maps the numeric status values returned by the projector to text strings used in the
-MQTT messages. There are two sections:-
-`INFO` - Maps to the status values returned with `INFO` messages
-`OK` - Maps values returned in `OK` messages. There are lookup tables for each kind of value
-
-Note hash tables are used for "numeric" values
 
 Organized by operation - set, query, key which are used by MQTT, and setup which is only used in the config.json file.
 

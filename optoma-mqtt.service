@@ -1,0 +1,15 @@
+[Unit]
+Description=Start Optoma Serial Interface to MQTT gateway
+After=network.target
+
+[Service]
+User=nodejs
+ExecStart=/usr/bin/node ./optoma-mqtt.js
+ExecReload=/bin/kill $MAINPID
+WorkingDirectory=/opt/optoma-mqtt
+Type=simple
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

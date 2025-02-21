@@ -1,0 +1,111 @@
+{
+  "INFO": {
+    "0": "standby",
+    "1": "warming_up",
+    "10": "lamp_ignite_fail",
+    "11": "board_power_on_fail",
+    "12": "color_wheel_stop",
+    "13": "over_temperature",
+    "14": "fan_1_lock",
+    "15": "fan_2_lock",
+    "16": "fan_3_lock",
+    "17": "fan_4_lock",
+    "18": "fan_5_lock",
+    "19": "lan_fail",
+    "2": "cooling_down",
+    "20": "laser_diode_lt_60percent",
+    "21": "laser_diode_1_over_temperature",
+    "22": "laser_diode_2_over_temperature",
+    "23": "high_ambient_temperature",
+    "24": "system_ready",
+    "3": "signal_out_of_range",
+    "4": "laser_diode_fail",
+    "6": "fan_lock",
+    "7": "over_temperature",
+    "8": "lamp_hours_running_out",
+    "97": "off",
+    "98": "ready",
+    "99": "no_power"
+  },
+  "OK": {
+    "aspect_ratio": {
+      "0": "none",
+      "1": "4:3",
+      "2": "16:9",
+      "3": "16:10",
+      "7": "auto"
+    },
+    "display_mode": {
+      "0": "none",
+      "1": "presentation",
+      "10": "dicom_sim",
+      "11": "film",
+      "12": "game",
+      "13": "cinema",
+      "14": "vivid",
+      "15": "isf_day",
+      "16": "isf_night",
+      "17": "isf_3d",
+      "18": "2d_high_speed",
+      "19": "blending",
+      "2": "bright",
+      "3": "movie",
+      "4": "srgb",
+      "5": "user",
+      "6": "user_3d",
+      "9": "3d",
+      "20": "sport",
+      "21": "hdr",
+      "22": "hdr_sim"
+    },
+    "color_temperature": {
+      "1": "5500k",
+      "2": "6500k",
+      "4": "7500k",
+      "5": "8500k",
+      "6": "9500k"
+    },
+    "format": {
+	"1": "4:3",
+	"2": "16:9",
+	"3": "16:10",
+	"4": "lbx",
+	"5": "native",
+	"6": "auto"
+    },
+    "input": {
+      "0": "none",
+      "1": "dvi",
+      "10": "component",
+      "11": "flash_drive",
+      "12": "network_display",
+      "13": "usb_display",
+      "14": "hdmi3",
+      "15": "displayport",
+      "16": "hdbase_t",
+      "2": "vga",
+      "3": "vga2",
+      "4": "s_video",
+      "5": "video",
+      "6": "bnc",
+      "7": "hdmi1",
+      "8": "hdmi2",
+      "9": "dongle"
+    },
+    "mute": {
+      "0": "off",
+      "1": "on"
+    },
+    "power": {
+      "0": "off",
+      "1": "on",
+      "2": "off"
+    },
+    "projection": {
+      "0": "desktop front",
+      "1": "desktop rear",
+      "2": "ceiling front",
+      "3": "ceiling rear"
+    }
+  }
+}

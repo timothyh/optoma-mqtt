@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@serialport/list": "^13.0.0",
+    "json-stable-stringify": "^1.2.1",
+    "json5": "^2.2.3",
+    "luxon": "^3.5.0",
+    "mqtt": "^5.10.3",
+    "serialport": "^13.0.0"
+  }
+}

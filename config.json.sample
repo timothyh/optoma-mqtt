@@ -1,0 +1,75 @@
+// Sample configuration file
+//
+// Copy to config.json, modify as needed and remove comments to make a
+// correct JSON file.
+// Use jq to verify correct formatting
+{
+  // The AMX command is used to identify the device/projector. This section
+  // defines the values expected in the response.
+  // This section can be removed and no checks will be performed.
+  "amx": {
+    "make": "Optoma",
+    "sdkclass": "VideoProjector"
+  },
+  // Serial baud rate - Most configs can leave unchanged
+  "baud_rate": 9600,
+  // If true, Emit debug messages
+  "debug": false,
+  // Optoma serial device id as defined in documentation
+  // Most configs can leave unchanged
+  "device_id": 0,
+  // MQTT broker and authentication information
+  // As shown configured for mqtts
+  "mqtt_conf": {
+    "cafile": "./myca.crt",
+    "host": "mqtt.example.com",
+    "keepalive": 60,
+    "password": "password_goes_here",
+    // This is for an application level MQTT keepalive message
+    "ping_topic": "ping/optoma/myroom/_ping",
+    "port": "8883",
+    "protocol": "mqtts",
+    // Defines topic prefix for outgoing and incoming messages
+    "topic_prefix": "home/optoma/myroom",
+    "username": "optoma-lr"
+  },
+  // Log raw serial data
+  "raw_data": false,
+  // Serial device to use - This is for a USB to serial adapter
+  "serial_device": "/dev/ttyUSB0",
+  // Commands to run at various stages of warmup and shutdown
+  // See README for description of how commands are formatted
+  "setup": {
+    // Executed immediately device powers up
+    // Very few commands appear to work on immediate startup
+    "on_start" : [
+    ],
+    // Executed when device is warmed up and fully ready.
+    // Can be used to configure projector and force into a known state.
+    "on_ready": [
+      "setup.projection.ceiling_front",
+      "setup.internal_speaker.off",
+      "setup.ir_function.off",
+      "set.hdmi_link.off",
+      "set.input.hdmi1",
+      "set.contrast.normal",
+      "set.brightness.normal",
+      "set.display_mode.bright",
+      "pause.2"
+    ],
+    // Run before power off command is issued to projector while device
+    // is still fully functional.
+    // Not run when device powered off by using hdmi-link, remote or
+    // control panel.
+    "on_shutdown": [
+      "setup.internal_speaker.on",
+      "setup.ir_function.on",
+      "pause.2"
+    ]
+  },
+  // Publish status of application
+  // Publishes "start" on startup and "stop" on shutdown
+  "status_topic": "home/optoma-mqtt/myroom/status",
+  // Verbose logging. No reason to change.
+  "verbose": true
+}

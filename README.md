@@ -2,19 +2,19 @@
 
 Gateway between Optoma Projector with serial interface and MQTT
 
-Used on Raspberry Pi 3b using 64bit Raspberry Pi OS and nodejs from Nodesource
+Installed on Raspberry Pi 3b using 64bit Raspberry Pi OS and nodejs from Nodesource
 
-Used with a single Optoma projector
+Used/tested with a single Optoma projector
 
 ## Installation
 
 Install Nodejs - Nodesource stable version (currently 22) suggested.
 
-Git pull/unpack files into directory - /opt/optoma-mqtt suggested.
+Git pull/unpack files into directory - `/opt/optoma-mqtt` suggested.
 
-If using systemd, verify contents of optoma-mqtt.service
+If using systemd, verify contents of `optoma-mqtt.service`
 
-Create a config.json file - See config.json.sample
+Create a `config.json` file - See `config.json.sample`
 
 See install.sh script to complete installation - This will create a nodejs user and systemd optoma-mqtt service
 

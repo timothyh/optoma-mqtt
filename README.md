@@ -19,7 +19,7 @@ Create a config.json file - See config.json.sample
 See install.sh script to complete installation - This will create a nodejs user and systemd optoma-mqtt service
 
 Note that access to the appropriate serial device is needed. Other than that that no special
-permissions are needed for this code. And it does not store any state so all files can be read-only.
+permissions are needed for this gateway. And no state is stored so all files can be read-only.
 
 ## Configuration
 
@@ -102,11 +102,11 @@ resulting value as a util.format string to format the payload.
 
 ## Important
 
-This code is tested with a single projector but should work with any projector using the Optoma command sequences.
+This gateway is tested with a single projector but should work with any projector using the Optoma command sequences.
 However, your mileage may vary.
 
 Obviously, there is no warranty and you use this at your own risk.
 
-This is "good enough for me" but git pull requests will be accepted so long as they perform a useful function and don't break the code for my own use.
+This is "good enough for me" but git pull requests will be accepted so long as they perform a useful function and doesn't break the code for my own use.
 Any code that looks like a security risk will be rejected.
 

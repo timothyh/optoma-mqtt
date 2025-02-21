@@ -109,12 +109,14 @@ RX: Ok10004007C00303
 In addition to monitoring `INFO` messages, this gateway polls the projector every 10 seconds to check status. This is used to check whether
 the projector has power, whether it's powered up or down and, when powered up, the `input` and `display_mode` attributes.
 
-This can be turned off by setting the `poll` attribute". Note that polling automatically restarts when the projector shows any kind of activity.
+This can be turned off by setting the `poll` attribute. Note that polling automatically restarts when the projector shows any kind of activity.
 
 ## Extending/adding projector commands
 
-#### `lookup.json`
-Maps the numeric status values returned by the projector to text strings used in the
+Two files are used `lookups.json` and `commands.json`
+
+#### `lookups.json`
+Maps numeric status values returned by the projector to text strings used in
 MQTT messages. There are two sections:
 - `INFO` - Maps to the status values returned with `INFO` messages
 - `OK` - Maps values returned in `OK` messages. There are lookup tables for each kind of value
@@ -126,16 +128,16 @@ Projector commands are all configured in this file. It has the following section
 - `set`, `query` and `key` which are used by the equivalent MQTT operations.
 - `setup` which is just used internally for setup commands
 
-  Optoma projector commands are well documented on the web. Just search for "optoma rs232 protocol".
+Organized by operation - `set`, `query` and `key` which are used by MQTT, plus `setup` which are commands only used in the `config.json` file.
 
-Organized by operation - set, query, key which are used by MQTT, and setup which is only used in the config.json file.
-
-Command is then defined as attribute plus (optionally) payload.
+Command is defined as attribute plus (optionally) payload. example: `input.hdmi1`
 
 For example
 topic: `home/optoma/myroom/input/set`, payload: `hdmi1` will be looked up as `set` -> `input.hdmi1`
 If there's no match on command + payload, `set` operations lookup just the attribute and treat the
 resulting value as a util.format string to format the payload.
+
+Optoma projector commands are well documented on the web. Just search for "optoma rs232 protocol".
 
 ## Important
 

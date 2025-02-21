@@ -62,10 +62,11 @@ Include
 - poll - turns polling of the projector "off" - set only
 
 ### Examples
+Using mosquitto_pub 
 
--- Power On
+- Power On
 ```mosquitto_pub -t home/optoma/myroom/power/set -m on```
--- Set input to HDMI1 
+- Set input to HDMI1 
 ```mosquitto_pub -t home/optoma/myroom/input/set -m hdmi1```
 
 ## Projector Polling

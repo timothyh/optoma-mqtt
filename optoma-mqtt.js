@@ -19,7 +19,7 @@ const config = mh.readConfig('./config.json')
 const lookups = require('./lookups.json')
 const commands = require('./commands.json')
 
-var device = {}
+//////////////////////////////////////////////////
 
 var mqttConf = config.mqtt_conf
 
@@ -27,9 +27,15 @@ var rawData = config.raw_data ? true : false
 var verbose = config.verbose ? true : false
 var debug = config.debug ? true : false
 
-mh.setSeparator('_')
+var cmdDelay = config.command_delay ? parseInt(config.command_delay) : 250
+var warmupDelay = config.warmup_delay ? parseInt(config.warmup_delay) : 20000
 
-const cmdPrefix = '~' + ('00' + config.device_id).slice(-2)
+const prefixStr = '~' + ('00' + config.device_id).slice(-2)
+
+//////////////////////////////////////////////////
+
+// For use in SLUGs
+mh.setSeparator('_')
 
 var mqttActivity = Date.now()
 
@@ -49,6 +55,8 @@ var cooling = false
 //
 var lastStatus = -1
 
+var device = {}
+
 var amxInfo = {}
 var lastInfoString = {}
 
@@ -61,16 +69,16 @@ var powerCmds = ['AMX', 'key.info', 'key.poweron', 'key.power_on', 'query.power'
 var shutdownCmds = ['set.power.off', 'key.poweroff', 'key.power_off']
 
 ////////////////////////////////////////////////////////////////////////////////
-// Info Values plus
+// Info Values (as documented) plus
 // 97 - 'off'
 // 98 - 'ready'
 // 99 - 'no power'
 //
-// Device cycle sequence is
+// Device cycle status sequence is
 // 99 - no power
 // 0 - standby
 // 1 - warming
-// 98 - on
+// 98 - ready
 // Projector running ....
 // 2 - cooling
 // 0 - standby
@@ -156,7 +164,7 @@ function _processInput(input) {
     } else if (input === 'P') {
         if (lastCommand[0].join('.') === 'set.power.on') {
             warming = true
-            _queueSendIn(7000, true)
+            _queueSendIn(warmupDelay, true)
             return
         }
     } else if (input.slice(0, 2).toUpperCase() === 'OK') {
@@ -178,16 +186,16 @@ function _processInput(input) {
                     break
             }
         } else if (lastCommand[0][0] === 'query') {
-            var val = parseInt(input.slice(2))
             if (lastCommand[0][1] in lookups.OK) {
                 try {
-                    var attr = lookups.OK[lastCommand[0][1]][val.toString()]
+                    var val = parseInt(input.slice(2)).toString()
+                    var attr = lookups.OK[lastCommand[0][1]][val]
                     if (attr) publishState(lastCommand[0][1], attr, true)
                 } catch {
                     console.warn('Unexpected response: ', lastCommand[0].join('.'), input.slice(2))
                 }
             } else {
-                publishState(lastCommand[0][1], val, true)
+                publishState(lastCommand[0][1], input.slice(2), true)
             }
         }
     } else if (input.slice(0, 3) === 'AMX') {
@@ -214,7 +222,7 @@ function _processInput(input) {
 
         amxInfo = device
     }
-    _queueSendIn(250, true)
+    _queueSendIn(cmdDelay, true)
 }
 
 function processSetup(when) {
@@ -289,13 +297,13 @@ var queueTimer
 // Place command at top of queue
 function queueCommandFirst(cmd) {
     cmdQueue.unshift(cmd)
-    _queueSendIn(100, false)
+    _queueSendIn(cmdDelay, false)
 }
 
 // Add command to end of queue
 function queueCommand(cmd) {
     cmdQueue.push(cmd)
-    _queueSendIn(100, false)
+    _queueSendIn(cmdDelay, false)
 }
 
 function _queueSendIn(interval, force) {
@@ -322,8 +330,11 @@ function _queueSendNext() {
 
     if (nextCmd[0] === 'pause') {
         var delay = 1000 * parseInt(nextCmd[1])
-        if (delay > 0) _queueSendIn(delay, true)
-        return
+        if (delay > 0) {
+            _queueSendIn(delay, true)
+            return
+        }
+        done = true
     } else if (nextCmd.slice(0, 2).join('.') === 'set.poll') {
         // Turn device polling on or off
         console.log("Device polling: %s", nextCmd.join('.'))
@@ -349,6 +360,9 @@ function _queueSendNext() {
     } else if (!deviceState) {
         console.warn("Device off - Can't send", nextCmd.join('.'))
         done = true
+    } else if (nextCmd[0] === 'publish_config') {
+        publishConfig()
+        done = true
     }
 
     if (done) {
@@ -356,31 +370,40 @@ function _queueSendNext() {
         return
     }
 
-    var rawCmd
+    var rawStr
     if (nextCmd[0] === 'AMX') {
-        rawCmd = 'AMX'
+        rawStr = 'AMX'
     } else {
         try {
             if (nextCmd[0] in commands) {
                 // Example 'set' -> 'power.on'
-                rawCmd = commands[nextCmd[0]][nextCmd.slice(1).join('.')]
-                if (rawCmd === undefined) {
+                var tmpCmd = nextCmd.slice(1).join('.')
+
+                if (tmpCmd in commands[nextCmd[0]]) {
+                    rawStr = prefixStr + commands[nextCmd[0]][tmpCmd]
+                } else if (nextCmd[1] in commands[nextCmd[0]]) {
                     // Example 'set' 'volume' '50'
-                    if (nextCmd[1] in commands[nextCmd[0]]) {
-                        var tmp = commands[nextCmd[0]][nextCmd[1]]
-                        rawCmd = util.format(tmp, nextCmd[2])
+                    var tmpStr = commands[nextCmd[0]][nextCmd[1]]
+
+                    if (nextCmd[2] && nextCmd[2].length) {
+                        var arg = parseInt(nextCmd[2])
+
+                        // Rough sanity check = value should be between -100 and 1000
+                        if (arg >= -100 && arg <= 1000) rawStr = prefixStr + util.format(tmpStr, arg)
+                    } else {
+                        rawStr = prefixStr + tmpStr
                     }
                 }
             }
         } catch {}
-        if (rawCmd !== undefined) rawCmd = cmdPrefix + rawCmd
     }
-    if (rawCmd !== undefined) {
-        if (debug) console.log("Send command: %s [%s]", nextCmd.join('.'), rawCmd)
-        if (rawData) console.log("TX: %s", rawCmd)
-        port.write(rawCmd + "\r")
+
+    if (rawStr !== undefined) {
+        if (debug) console.log("Send command: %s [%s]", nextCmd.join('.'), rawStr)
+        if (rawData) console.log("TX: %s", rawStr)
+        port.write(rawStr + "\r")
         lastCommand[0] = nextCmd
-        lastCommand[1] = rawCmd
+        lastCommand[1] = rawStr
         lastSendTime = Date.now()
     } else {
         console.warn('Unexpected command: ', nextCmd.join('.'))
@@ -391,11 +414,18 @@ function _queueSendNext() {
 
 var publishedState = {}
 
+function publishConfig() {
+    var payload = JSON.stringify(publishedState)
+
+    mqttClient.publish(mqttConf.topic_prefix + '/config', payload)
+
+    if (verbose) console.log("Device config published: %s", payload.replace(/[^\u0021-\u007E]+/g, ' '))
+}
+
 function publishState(attr, val, force = false) {
-    if (!force) {
-        if (publishedState[attr] === val) return
-        publishedState[attr] = val
-    }
+    if ((!force) && (publishedState[attr] === val)) return
+
+    publishedState[attr] = val
 
     mqttClient.publish(mqttConf.topic_prefix + '/' + attr, (typeof val === 'string') ? val : JSON.stringify(val))
 
@@ -486,6 +516,11 @@ mqttClient.on('message', function(topic, payload) {
         publishState('status', lookups.INFO[lastStatus.toString()], true)
     } else if (cmd.slice(0, 2).join('.') === 'set.poll') {
         queueCommand(cmd)
+    } else if (powerState && cmd.join('.') === 'query.config') {
+        Object.keys(commands.query).forEach(function(attr) {
+            queueCommand(['query', attr])
+        })
+        queueCommand(['publish_config'])
     } else if (powerState) {
         if (deviceState && shutdownCmds.includes(cmd.join('.'))) {
             processSetup('on_shutdown')

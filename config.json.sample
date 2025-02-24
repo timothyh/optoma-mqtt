@@ -13,6 +13,8 @@
   },
   // Serial baud rate - Most configs can leave unchanged
   "baud_rate": 9600,
+  // Default delay between projector commands
+  "command_delay": 250,
   // If true, Emit debug messages
   "debug": false,
   // Optoma serial device id as defined in documentation
@@ -71,5 +73,7 @@
   // Publishes "start" on startup and "stop" on shutdown
   "status_topic": "home/optoma-mqtt/myroom/status",
   // Verbose logging. No reason to change.
-  "verbose": true
+  "verbose": true,
+  // Delay after power-on to allow projector to warmup
+  "warmup_delay": 20000
 }

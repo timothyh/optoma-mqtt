@@ -57,9 +57,10 @@ Include
 - `volume` - payload is numeric value
 - `brightness` - numeric value - range -50 to +50
 - `contrast` - numeric value - range -50 to 50
-- `input` - hdmi1, hdmi2 and others - varies by projector
-- `display_mode` - values include "bright", "movie" - varies by projector
+- `input` - `hdmi1`, `hdmi2` and others - varies by projector. Numeric values also accepted
+- `display_mode` - values include "bright", "movie" - varies by projector. Numeric values also accepted
 - `poll` - turns polling of the projector "off" - set only
+- `config` - when queried publishes a JSON file of projector settings. Only attributes documented in the `query` section of `commands.json` are included
 
 #### Examples
 Using `mosquitto_pub`

@@ -102,6 +102,7 @@ Command failed: ~0020 2 (set.display_mode.bright)
 TX: ~00150 1
 RX: Ok10004007C00303
 ```
+- Note that value setting commands appear to fail if no value change is required 
 - There appear to be some slight varients to the Optoma protocol based on projector. If the logging shows serial commands being rejected check the documentation for your specific projector.
   
 ## Projector Polling

@@ -8,7 +8,7 @@ Used/tested with a single Optoma projector
 
 ## Installation
 
-You'll need a serial interface. The easiest way is to get a USB to DB9 serial connector. And (most likely)
+You'll need an RS232 serial interface. The easiest way is to get a USB to DB9 serial connector. And (most likely)
 you'll need a DB9 Female to Female Null Modem to enable a connection to the projector.
 
 Install Nodejs - Nodesource stable version (currently 22) suggested.
